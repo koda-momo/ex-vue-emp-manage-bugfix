@@ -2,6 +2,13 @@
   <div class="container">
     <div class="row register-page">
       <div class="error">{{ errorMessage }}</div>
+      <div class="error" v-show="nameErrorMessage">名前を入力して下さい</div>
+      <div class="error" v-show="mailErrorMessage">
+        メールアドレスを入力して下さい
+      </div>
+      <div class="error" v-show="passErrorMessage">
+        パスワードを入力して下さい
+      </div>
       <form class="col s12" id="reg-form">
         <div class="row">
           <div class="input-field col s6">
@@ -104,6 +111,9 @@ export default class RegisterAdmin extends Vue {
   async registerAdmin(): Promise<void> {
     //エラー表示
     this.errorMessage = "";
+    this.nameErrorMessage = false;
+    this.mailErrorMessage = false;
+    this.passErrorMessage = false;
     if (this.lastName === "" || this.firstName === "") {
       this.nameErrorMessage = true;
     }
