@@ -4,6 +4,7 @@
  * @remarks
  * 従業員情報を表します。
  */
+import { format } from "date-fns";
 export class Employee {
   constructor(
     // ID
@@ -70,6 +71,10 @@ export class Employee {
 
   public set hireDate(hireDate: Date) {
     this._hireDate = hireDate;
+  }
+
+  get fixHireDate(): string {
+    return format(this.hireDate, "yyyy年M月d日");
   }
 
   public get mailAddress(): string {
