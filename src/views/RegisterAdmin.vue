@@ -87,6 +87,12 @@ export default class RegisterAdmin extends Vue {
   private password = "";
   //エラーメッセージ
   private errorMessage = "";
+  //名前エラー
+  private nameErrorMessage = false;
+  //メールアドレスエラー
+  private mailErrorMessage = false;
+  //パスワードエラー
+  private passErrorMessage = false;
 
   /**
    * 管理者情報を登録する.
@@ -96,7 +102,25 @@ export default class RegisterAdmin extends Vue {
    * @returns Promiseオブジェクト
    */
   async registerAdmin(): Promise<void> {
+    //エラー表示
     this.errorMessage = "";
+    if (this.lastName === "" || this.firstName === "") {
+      this.nameErrorMessage = true;
+    }
+    if (this.mailAddress === "") {
+      this.mailErrorMessage = true;
+    }
+    if (this.password === "") {
+      this.passErrorMessage = true;
+    }
+
+    if (
+      this.nameErrorMessage ||
+      this.mailErrorMessage ||
+      this.passErrorMessage
+    ) {
+      return;
+    }
     // 管理者登録処理
     const response = await axios.post(`${config.EMP_WEBAPI_URL}/insert`, {
       name: this.lastName + " " + this.firstName,
