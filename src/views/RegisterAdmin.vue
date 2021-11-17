@@ -2,13 +2,17 @@
   <div class="container">
     <div class="row register-page">
       <div class="error">{{ errorMessage }}</div>
-      <div class="error" v-show="nameErrorMessage">名前を入力して下さい</div>
+      <div class="error" v-show="nameErrorMessage">＊名前を入力して下さい</div>
       <div class="error" v-show="mailErrorMessage">
-        メールアドレスを入力して下さい
+        ＊メールアドレスを入力して下さい
       </div>
       <div class="error" v-show="passErrorMessage">
-        パスワードを入力して下さい
+        ＊パスワードを入力して下さい
       </div>
+      <div class="error" v-show="verificationPassErrorMessage">
+        ＊パスワードが一致しません
+      </div>
+
       <form class="col s12" id="reg-form">
         <div class="row">
           <div class="input-field col s6">
@@ -58,6 +62,23 @@
           </div>
         </div>
         <div class="row">
+          <div class="input-field col s12">
+            <input
+              id="verificationPassword"
+              type="password"
+              class="validate"
+              minlength="8"
+              v-model="verificationPassword"
+              required
+            />
+            <label
+              for="
+VerificationPassword"
+              >パスワード(確認用)</label
+            >
+          </div>
+        </div>
+        <div class="row">
           <div class="input-field col s6">
             <button
               class="btn btn-large btn-register waves-effect waves-light"
@@ -92,6 +113,8 @@ export default class RegisterAdmin extends Vue {
   private mailAddress = "";
   // パスワード
   private password = "";
+  //確認用パスワード
+  private verificationPassword = "";
   //エラーメッセージ
   private errorMessage = "";
   //名前エラー
@@ -100,6 +123,8 @@ export default class RegisterAdmin extends Vue {
   private mailErrorMessage = false;
   //パスワードエラー
   private passErrorMessage = false;
+  //確認用パスワードエラー
+  private verificationPassErrorMessage = false;
 
   /**
    * 管理者情報を登録する.
@@ -123,11 +148,15 @@ export default class RegisterAdmin extends Vue {
     if (this.password === "") {
       this.passErrorMessage = true;
     }
+    if (this.verificationPassword != this.password) {
+      this.verificationPassErrorMessage = true;
+    }
 
     if (
       this.nameErrorMessage ||
       this.mailErrorMessage ||
-      this.passErrorMessage
+      this.passErrorMessage ||
+      this.verificationPassErrorMessage
     ) {
       return;
     }
