@@ -1,6 +1,12 @@
 <template>
   <div class="container">
     <!-- パンくずリスト -->
+    <form>
+      <div class="employeeSearch">
+        <label for="employeeSearch">従業員名検索：</label>
+        <input type="text" id="employeeSearch" />
+      </div>
+    </form>
     <nav>
       <div class="nav-wrapper">
         <div class="col s12 teal">
@@ -88,5 +94,9 @@ export default class EmployeeList extends Vue {
   display: block;
   width: 150px;
   margin: 0 auto;
+}
+
+.employeeSearch {
+  margin-bottom: 30px;
 }
 </style>
