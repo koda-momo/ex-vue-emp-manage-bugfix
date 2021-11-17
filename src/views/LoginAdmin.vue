@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="row login-page">
+      <div class="error">{{ errorMessage }}</div>
       <div class="col s12 z-depth-6 card-panel">
         <form class="login-form">
           <div class="row"></div>
@@ -96,5 +97,8 @@ export default class LoginAdmin extends Vue {
 <style scoped>
 .login-page {
   width: 600px;
+}
+.error {
+  color: red;
 }
 </style>
