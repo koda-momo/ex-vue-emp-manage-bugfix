@@ -2,7 +2,9 @@
   <div class="container">
     <!-- パンくずリスト -->
     <form>
-      <span class="error" v-show="errorMessage">検索結果がありません</span>
+      <span class="error" v-show="errorMessage"
+        >１件もありませんでしたので全件表示します</span
+      >
       <div class="employeeSearch">
         <label for="employeeSearch">従業員名検索：</label>
         <input type="text" id="employeeSearch" v-model="searchName" />
@@ -107,6 +109,7 @@ export default class EmployeeList extends Vue {
     this.currentEmployeeList = array;
     if (array.length === 0) {
       this.errorMessage = true;
+      this.currentEmployeeList = this.$store.getters.getAllEmployees;
     }
   }
   //script
