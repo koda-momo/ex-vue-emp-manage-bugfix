@@ -74,7 +74,8 @@ export class Employee {
   }
 
   get fixHireDate(): string {
-    return format(this.hireDate, "yyyy年M月d日");
+    const day = new Date(this.hireDate);
+    return format(day, "yyyy年MM月dd日");
   }
 
   public get mailAddress(): string {
