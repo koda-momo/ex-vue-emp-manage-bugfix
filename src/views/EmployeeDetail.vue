@@ -4,7 +4,9 @@
     <nav>
       <div class="nav-wrapper">
         <div class="col s12 teal">
-          <a class="breadcrumb">従業員リスト</a>
+          <router-link to="/employeeList" class="breadcrumb">
+            従業員リスト
+          </router-link>
           <a class="breadcrumb">従業員詳細</a>
         </div>
       </div>
@@ -62,7 +64,7 @@
             </tr>
             <tr>
               <th nowrap>給料</th>
-              <td><span v-html="currentEmployee.salary"></span>円</td>
+              <td v-html="currentEmployee.fixSalary"></td>
             </tr>
             <tr>
               <th nowrap>特性</th>
