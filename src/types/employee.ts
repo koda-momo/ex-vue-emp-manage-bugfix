@@ -112,6 +112,10 @@ export class Employee {
     this._salary = salary;
   }
 
+  get fixSalary(): string {
+    return this.salary.toLocaleString() + "円";
+  }
+
   public get characteristics(): string {
     return this._characteristics;
   }
