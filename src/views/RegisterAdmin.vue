@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="row register-page">
+      <div class="error">{{ errorMessage }}</div>
       <form class="col s12" id="reg-form">
         <div class="row">
           <div class="input-field col s6">
@@ -84,6 +85,8 @@ export default class RegisterAdmin extends Vue {
   private mailAddress = "";
   // パスワード
   private password = "";
+  //エラーメッセージ
+  private errorMessage = "";
 
   /**
    * 管理者情報を登録する.
@@ -93,6 +96,7 @@ export default class RegisterAdmin extends Vue {
    * @returns Promiseオブジェクト
    */
   async registerAdmin(): Promise<void> {
+    this.errorMessage = "";
     // 管理者登録処理
     const response = await axios.post(`${config.EMP_WEBAPI_URL}/insert`, {
       name: this.lastName + " " + this.firstName,
@@ -101,7 +105,11 @@ export default class RegisterAdmin extends Vue {
     });
     console.dir("response:" + JSON.stringify(response));
 
-    this.$router.push("/loginAdmin");
+    if (response.data.status === "success") {
+      this.$router.push("/loginAdmin");
+    } else {
+      this.errorMessage = "登録に失敗しました(" + response.data.message + ")";
+    }
   }
 }
 </script>
@@ -109,5 +117,8 @@ export default class RegisterAdmin extends Vue {
 <style scoped>
 .register-page {
   width: 600px;
+}
+.error {
+  color: red;
 }
 </style>
