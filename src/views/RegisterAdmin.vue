@@ -1,6 +1,14 @@
 <template>
   <div class="container">
     <div class="row register-page">
+      <div class="error">{{ errorMessage }}</div>
+      <div class="error" v-show="nameErrorMessage">名前を入力して下さい</div>
+      <div class="error" v-show="mailErrorMessage">
+        メールアドレスを入力して下さい
+      </div>
+      <div class="error" v-show="passErrorMessage">
+        パスワードを入力して下さい
+      </div>
       <form class="col s12" id="reg-form">
         <div class="row">
           <div class="input-field col s6">
@@ -84,6 +92,14 @@ export default class RegisterAdmin extends Vue {
   private mailAddress = "";
   // パスワード
   private password = "";
+  //エラーメッセージ
+  private errorMessage = "";
+  //名前エラー
+  private nameErrorMessage = false;
+  //メールアドレスエラー
+  private mailErrorMessage = false;
+  //パスワードエラー
+  private passErrorMessage = false;
 
   /**
    * 管理者情報を登録する.
@@ -93,6 +109,28 @@ export default class RegisterAdmin extends Vue {
    * @returns Promiseオブジェクト
    */
   async registerAdmin(): Promise<void> {
+    //エラー表示
+    this.errorMessage = "";
+    this.nameErrorMessage = false;
+    this.mailErrorMessage = false;
+    this.passErrorMessage = false;
+    if (this.lastName === "" || this.firstName === "") {
+      this.nameErrorMessage = true;
+    }
+    if (this.mailAddress === "") {
+      this.mailErrorMessage = true;
+    }
+    if (this.password === "") {
+      this.passErrorMessage = true;
+    }
+
+    if (
+      this.nameErrorMessage ||
+      this.mailErrorMessage ||
+      this.passErrorMessage
+    ) {
+      return;
+    }
     // 管理者登録処理
     const response = await axios.post(`${config.EMP_WEBAPI_URL}/insert`, {
       name: this.lastName + " " + this.firstName,
@@ -101,7 +139,11 @@ export default class RegisterAdmin extends Vue {
     });
     console.dir("response:" + JSON.stringify(response));
 
-    this.$router.push("/loginAdmin");
+    if (response.data.status === "success") {
+      this.$router.push("/loginAdmin");
+    } else {
+      this.errorMessage = "登録に失敗しました(" + response.data.message + ")";
+    }
   }
 }
 </script>
@@ -109,5 +151,8 @@ export default class RegisterAdmin extends Vue {
 <style scoped>
 .register-page {
   width: 600px;
+}
+.error {
+  color: red;
 }
 </style>
