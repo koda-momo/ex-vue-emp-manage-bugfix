@@ -66,6 +66,7 @@ export default class EmployeeList extends Vue {
     // ページング機能実装のため最初の10件に絞り込み
     this.currentEmployeeList = this.$store.getters.getAllEmployees;
   }
+
   /**
    * 現在表示されている従業員一覧の数を返す.
    *

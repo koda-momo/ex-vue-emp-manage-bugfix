@@ -83,12 +83,23 @@ export default new Vuex.Store({
       return state.totalEmployeeCount;
     },
     /**
-     * 全従業員一覧を返す.
+     * 全従業員一覧を返す(入社日降順).
      *
      * @param state ステート
-     * @returns 従業員一覧情報「
+     * @returns 従業員一覧情報
      */
     getAllEmployees(state) {
+      state.employees.sort(function(a, b) {
+        const dayA = a.hireDate;
+        const dayB = b.hireDate;
+        if (dayA < dayB) {
+          return 1;
+        }
+        if (dayA > dayB) {
+          return -1;
+        }
+        return 0;
+      });
       return state.employees;
     },
     /**
