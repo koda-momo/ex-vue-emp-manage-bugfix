@@ -159,12 +159,15 @@ export default class EmployeeDetail extends Vue {
     // // 今取得した従業員情報から扶養人数を取り出し、currentDependentsCount属性に代入する
     // this.currentDependentsCount = this.currentEmployee.dependentsCount;
 
+    //APIより１件の従業員情報を取得し、取得した情報をcurrentEmployee属性に代入する
     const response = await axios.get(
       `http://153.127.48.168:8080/ex-emp-api/employee/${employeeId}`
     );
     console.dir("レスポンス；" + JSON.stringify(response));
     this.currentEmployee = response.data.employee;
-    this.currentEmployeeImage = `${config.EMP_WEBAPI_URL}/img/${response.data.image}`;
+    // 今取得した従業員情報から画像パスを取り出し、imgディレクトリの名前を前に付与(文字列連結)してcurrentEmployeeImage属性に代入する
+    this.currentEmployeeImage = `${config.EMP_WEBAPI_URL}/img/${response.data.employee.image}`;
+    //今取得した従業員情報から扶養人数を取り出し、currentDependentsCount属性に代入する
     this.currentDependentsCount = response.data.count;
   }
 
