@@ -2,9 +2,11 @@
   <div class="container">
     <!-- パンくずリスト -->
     <form>
+      <span class="error" v-show="errorMessage">検索結果がありません</span>
       <div class="employeeSearch">
         <label for="employeeSearch">従業員名検索：</label>
-        <input type="text" id="employeeSearch" />
+        <input type="text" id="employeeSearch" v-model="searchName" />
+        <button type="button" v-on:click="getemployeeSearch">検索</button>
       </div>
     </form>
     <nav>
@@ -53,6 +55,10 @@ export default class EmployeeList extends Vue {
   private currentEmployeeList: Array<Employee> = [];
   // 従業員数
   private employeeCount = 0;
+  //検索する従業員名
+  private searchName = "";
+  //検索に対するエラーメッセージ
+  private errorMessage = false;
 
   /**
    * Vuexストアのアクション経由で非同期でWebAPIから従業員一覧を取得する.
@@ -80,6 +86,30 @@ export default class EmployeeList extends Vue {
   get getEmployeeCount(): number {
     return this.currentEmployeeList.length;
   }
+
+  /**
+   * 従業員名をあいまい検索できるメソッド.
+   */
+  getemployeeSearch(): void {
+    this.errorMessage = false;
+    this.currentEmployeeList = this.$store.getters.getAllEmployees;
+    const array = new Array<Employee>();
+    if (this.searchName === "") {
+      return;
+    }
+    for (const employee of this.currentEmployeeList) {
+      this.currentEmployeeList;
+      if (employee.name.includes(this.searchName)) {
+        console.dir("取得した情報：" + JSON.stringify(employee));
+        array.push(employee);
+      }
+    }
+    this.currentEmployeeList = array;
+    if (array.length === 0) {
+      this.errorMessage = true;
+    }
+  }
+  //script
 }
 </script>
 
@@ -88,6 +118,10 @@ export default class EmployeeList extends Vue {
   margin-bottom: 20px;
   width: 450px;
   margin: 0 auto;
+}
+
+.error {
+  color: red;
 }
 
 .searchBtn {
