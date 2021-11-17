@@ -65,17 +65,6 @@ export default class EmployeeList extends Vue {
     // 非同期で外部APIから取得しているので、async/await使わないとGetterで取得できない
     // ページング機能実装のため最初の10件に絞り込み
     this.currentEmployeeList = this.$store.getters.getAllEmployees;
-    this.currentEmployeeList.sort(function(a, b) {
-      let dayA = a.hireDate;
-      let dayB = b.hireDate;
-      if (dayA < dayB) {
-        return 1;
-      }
-      if (dayA > dayB) {
-        return -1;
-      }
-      return 0;
-    });
   }
 
   /**
