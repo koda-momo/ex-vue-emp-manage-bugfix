@@ -273,17 +273,23 @@ export default class RegisterAdmin extends Vue {
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const axiosJsonpAdapter = require("axios-jsonp");
-    const responce = await axios.get("https://zipcoda.net/api", {
-      adapter: axiosJsonpAdapter,
-      params: {
-        zipcode: apiPostalCode,
-      },
-    });
-    console.log("レスポンス：" + responce.data.status);
-    if (responce.data.length != 1) {
+    try {
+      const responce = await axios.get("https://zipcoda.net/api", {
+        adapter: axiosJsonpAdapter,
+        params: {
+          zipcode: apiPostalCode,
+        },
+      });
+      // console.log("レスポンス：" + responce.data.status);
+      console.dir(JSON.stringify(responce));
+      if (responce.data.length != 1) {
+        this.addressApiErrorMessage = true;
+      } else {
+        this.address = responce.data.items[0].address;
+      }
+    } catch (e) {
+      console.log("errorerror");
       this.addressApiErrorMessage = true;
-    } else {
-      this.address = responce.data.items[0].address;
     }
   }
 
