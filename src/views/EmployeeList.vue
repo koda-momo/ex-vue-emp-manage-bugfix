@@ -74,11 +74,10 @@ export default class EmployeeList extends Vue {
    */
   async created(): Promise<void> {
     await this.$store.dispatch("getEmployeeList");
-
+    this.currentEmployeeList = this["$store"].getters.getAllEmployees;
     // 従業員一覧情報をVuexストアから取得
     // 非同期で外部APIから取得しているので、async/await使わないとGetterで取得できない
     // ページング機能実装のため最初の10件に絞り込み
-    this.currentEmployeeList = this.$store.getters.getAllEmployees;
   }
 
   /**
@@ -91,23 +90,45 @@ export default class EmployeeList extends Vue {
   }
 
   /**
+   * 従業員の表示を10人ずつにする
+   */
+  get reEmployeeList(): Array<Employee> {
+    return this.currentEmployeeList;
+  }
+
+  get pageButtonNumber(): Array<number> {
+    const array = new Array<number>();
+    //終わりのボタン番号
+    let lastButton = 0;
+    if (this.getEmployeeCount % 10 == 0) {
+      lastButton = this.getEmployeeCount / 10;
+    } else {
+      lastButton = Math.ceil(this.getEmployeeCount / 10);
+    }
+    console.log("ラストボタン：" + lastButton);
+    return array;
+  }
+
+  /**
    * 従業員名をあいまい検索できるメソッド.
    */
   getemployeeSearch(): void {
+    //エラーメッセージと表示する従業員の初期化
     this.errorMessage = false;
     this.currentEmployeeList = this.$store.getters.getAllEmployees;
+    //検索欄が空欄だった場合全件表示
     const array = new Array<Employee>();
     if (this.searchName === "") {
       return;
     }
+    //検索結果に合わせて表示するために配列を作成
     for (const employee of this.currentEmployeeList) {
-      this.currentEmployeeList;
       if (employee.name.includes(this.searchName)) {
-        console.dir("取得した情報：" + JSON.stringify(employee));
         array.push(employee);
       }
     }
     this.currentEmployeeList = array;
+    //検索結果が0件だった場合、エラーを表示して全件表示
     if (array.length === 0) {
       this.errorMessage = true;
       this.currentEmployeeList = this.$store.getters.getAllEmployees;
