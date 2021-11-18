@@ -267,10 +267,14 @@ export default class RegisterAdmin extends Vue {
    * 郵便番号から住所を取得.
    */
   async searchAddress(): Promise<void> {
+    //初期値リセット
     this.addressApiErrorMessage = false;
     this.address = "";
+
+    //郵便番号を数字に
     const apiPostalCode = Number(this.postalCode);
 
+    //APIを使って住所を取得
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const axiosJsonpAdapter = require("axios-jsonp");
     try {
