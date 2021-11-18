@@ -73,7 +73,7 @@ export class Employee {
     this._hireDate = hireDate;
   }
 
-  get fixHireDate(): string {
+  get formatHireDate(): string {
     const day = new Date(this.hireDate);
     return format(day, "yyyy年MM月dd日");
   }
