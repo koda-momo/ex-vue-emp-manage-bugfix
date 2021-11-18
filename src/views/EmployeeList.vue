@@ -57,6 +57,7 @@
         :key="buttonNum"
         class="btn btn-large btn-register waves-effect waves-light"
         v-show="showButton"
+        v-on:click="formatDisplayEmployee(buttonNum)"
       >
         {{ buttonNum }}
       </button>
@@ -101,7 +102,7 @@ export default class EmployeeList extends Vue {
     // 従業員一覧情報をVuexストアから取得
     // 非同期で外部APIから取得しているので、async/await使わないとGetterで取得できない
     // ページング機能実装のため最初の10件に絞り込み
-    this.displayEmployee();
+    this.firstDisplayEmployee();
   }
 
   /**
@@ -121,10 +122,10 @@ export default class EmployeeList extends Vue {
     const array = new Array<number>();
     //終わりのボタン番号
     let lastButton = 0;
-    if (this.currentEmployeeList.length % 10 == 0) {
-      lastButton = this.currentEmployeeList.length / 10;
+    if (this.getEmployeeCount % 10 == 0) {
+      lastButton = this.getEmployeeCount / 10;
     } else {
-      lastButton = Math.ceil(this.currentEmployeeList.length / 10);
+      lastButton = Math.ceil(this.getEmployeeCount / 10);
     }
     console.log("ラストボタン：" + lastButton);
     for (let i = 1; i <= lastButton; i++) {
@@ -133,9 +134,27 @@ export default class EmployeeList extends Vue {
     return array;
   }
 
-  /**従業員を10人ずつに搾る */
-  displayEmployee(): void {
+  /**
+   * 従業員を1-10人目までに搾る(初期表示用).
+   */
+  firstDisplayEmployee(): void {
     for (let i = 0; i < 10; i++) {
+      this.displayEmployeeList.push(this.currentEmployeeList[i]);
+    }
+  }
+
+  /**
+   * 従業員を10人ずつに搾って表示する(ボタン押下時用).
+   */
+  formatDisplayEmployee(pageNum: number): void {
+    this.displayEmployeeList.splice(0, this.displayEmployeeList.length);
+    const BOX_COUNT = 1;
+    const firstEmployee = (pageNum - BOX_COUNT) * 10;
+    let lastEmployee = pageNum * 10 + BOX_COUNT;
+    if (this.currentEmployeeList.length < lastEmployee) {
+      lastEmployee = this.currentEmployeeList.length - BOX_COUNT;
+    }
+    for (let i = firstEmployee; i <= lastEmployee; i++) {
       this.displayEmployeeList.push(this.currentEmployeeList[i]);
     }
   }
@@ -146,7 +165,7 @@ export default class EmployeeList extends Vue {
   getemployeeSearch(): void {
     //エラーメッセージと表示する従業員の初期化
     this.errorMessage = false;
-    this.displayEmployee();
+    this.firstDisplayEmployee();
     this.showButton = true;
 
     //検索欄が空欄だった場合全件表示
@@ -165,7 +184,7 @@ export default class EmployeeList extends Vue {
     //検索結果が0件だった場合、エラーを表示して全件表示
     if (array.length === 0) {
       this.errorMessage = true;
-      this.displayEmployee();
+      this.firstDisplayEmployee();
       this.showButton = true;
     }
   }
