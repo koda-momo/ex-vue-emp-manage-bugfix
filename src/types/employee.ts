@@ -118,7 +118,7 @@ export class Employee {
     this._salary = salary;
   }
 
-  get fixSalary(): string {
+  get formatSalary(): string {
     return this.salary.toLocaleString() + "円";
   }
 

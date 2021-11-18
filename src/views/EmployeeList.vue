@@ -1,6 +1,16 @@
 <template>
   <div class="container">
     <!-- パンくずリスト -->
+    <form>
+      <span class="error" v-show="errorMessage"
+        >１件もありませんでしたので全件表示します</span
+      >
+      <div class="employeeSearch">
+        <label for="employeeSearch">従業員名検索：</label>
+        <input type="text" id="employeeSearch" v-model="searchName" />
+        <button type="button" v-on:click="getemployeeSearch">検索</button>
+      </div>
+    </form>
     <nav>
       <div class="nav-wrapper">
         <div class="col s12 teal">
@@ -47,6 +57,10 @@ export default class EmployeeList extends Vue {
   private currentEmployeeList: Array<Employee> = [];
   // 従業員数
   private employeeCount = 0;
+  //検索する従業員名
+  private searchName = "";
+  //検索に対するエラーメッセージ
+  private errorMessage = false;
 
   /**
    * Vuexストアのアクション経由で非同期でWebAPIから従業員一覧を取得する.
@@ -66,6 +80,7 @@ export default class EmployeeList extends Vue {
     // ページング機能実装のため最初の10件に絞り込み
     this.currentEmployeeList = this.$store.getters.getAllEmployees;
   }
+
   /**
    * 現在表示されている従業員一覧の数を返す.
    *
@@ -74,6 +89,31 @@ export default class EmployeeList extends Vue {
   get getEmployeeCount(): number {
     return this.currentEmployeeList.length;
   }
+
+  /**
+   * 従業員名をあいまい検索できるメソッド.
+   */
+  getemployeeSearch(): void {
+    this.errorMessage = false;
+    this.currentEmployeeList = this.$store.getters.getAllEmployees;
+    const array = new Array<Employee>();
+    if (this.searchName === "") {
+      return;
+    }
+    for (const employee of this.currentEmployeeList) {
+      this.currentEmployeeList;
+      if (employee.name.includes(this.searchName)) {
+        console.dir("取得した情報：" + JSON.stringify(employee));
+        array.push(employee);
+      }
+    }
+    this.currentEmployeeList = array;
+    if (array.length === 0) {
+      this.errorMessage = true;
+      this.currentEmployeeList = this.$store.getters.getAllEmployees;
+    }
+  }
+  //script
 }
 </script>
 
@@ -84,9 +124,17 @@ export default class EmployeeList extends Vue {
   margin: 0 auto;
 }
 
+.error {
+  color: red;
+}
+
 .searchBtn {
   display: block;
   width: 150px;
   margin: 0 auto;
+}
+
+.employeeSearch {
+  margin-bottom: 30px;
 }
 </style>

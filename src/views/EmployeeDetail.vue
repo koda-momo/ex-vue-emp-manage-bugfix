@@ -19,7 +19,7 @@
             <tr>
               <th nowrap>従業員名</th>
               <td>
-                <span v-html="currentEmployee.name"></span>
+                {{ currentEmployee.name }}
               </td>
             </tr>
             <tr>
@@ -30,9 +30,7 @@
             </tr>
             <tr>
               <th nowrap>性別</th>
-              <td>
-                <span v-html="currentEmployee.gender"></span>
-              </td>
+              <td>{{ currentEmployee.gender }}</td>
             </tr>
             <tr>
               <th nowrap>入社日</th>
@@ -40,37 +38,31 @@
             </tr>
             <tr>
               <th nowrap>メールアドレス</th>
-              <td>
-                <span v-html="currentEmployee.mailAddress"></span>
-              </td>
+              <td>{{ currentEmployee.mailAddress }}</td>
             </tr>
             <tr>
               <th nowrap>郵便番号</th>
-              <td>
-                <span v-html="currentEmployee.zipCode"></span>
-              </td>
+              <td>{{ currentEmployee.zipCode }}</td>
             </tr>
             <tr>
               <th nowrap>住所</th>
               <td>
-                <span v-html="currentEmployee.address"></span>
+                {{ currentEmployee.address }}
               </td>
             </tr>
             <tr>
               <th nowrap>電話番号</th>
               <td>
-                <span v-html="currentEmployee.telephone"></span>
+                {{ currentEmployee.telephone }}
               </td>
             </tr>
             <tr>
               <th nowrap>給料</th>
-              <td v-html="currentEmployee.fixSalary"></td>
+              <td>{{ currentEmployee.formatSalary }}</td>
             </tr>
             <tr>
               <th nowrap>特性</th>
-              <td>
-                <span v-html="currentEmployee.characteristics"></span>
-              </td>
+              <td>{{ currentEmployee.characteristics }}</td>
             </tr>
             <tr>
               <th nowrap>扶養人数</th>
@@ -146,17 +138,32 @@ export default class EmployeeDetail extends Vue {
    * Vuexストア内のGetterを呼ぶ。
    * ライフサイクルフックのcreatedイベント利用
    */
-  created(): void {
+  async created(): Promise<void> {
     // 送られてきたリクエストパラメータのidをnumberに変換して取得する
     const employeeId = parseInt(this.$route.params.id);
-
-    // VuexストアのGetter、getEmployeeById()メソッドに先ほど取得したIDを渡し、１件の従業員情報を取得し、戻り値をcurrentEmployee属性に代入する
-    this.currentEmployee = this.$store.getters.getEmployeeById(employeeId);
-
+    //APIより１件の従業員情報を取得し、取得した情報をcurrentEmployee属性に代入する
+    const payload = await axios.get(
+      `http://153.127.48.168:8080/ex-emp-api/employee/${employeeId}`
+    );
+    // console.dir("レスポンス；" + JSON.stringify(response));
+    const response = payload.data.employee;
+    this.currentEmployee = new Employee(
+      response.id,
+      response.name,
+      response.image,
+      response.gender,
+      response.hireDate,
+      response.mailAddress,
+      response.zipCode,
+      response.address,
+      response.telephone,
+      response.salary,
+      response.characteristics,
+      response.dependentsCount
+    );
     // 今取得した従業員情報から画像パスを取り出し、imgディレクトリの名前を前に付与(文字列連結)してcurrentEmployeeImage属性に代入する
-    this.currentEmployeeImage = `${config.EMP_WEBAPI_URL}/img/${this.currentEmployee.image}`;
-
-    // 今取得した従業員情報から扶養人数を取り出し、currentDependentsCount属性に代入する
+    this.currentEmployeeImage = `${config.EMP_WEBAPI_URL}/img/${response.image}`;
+    //今取得した従業員情報から扶養人数を取り出し、currentDependentsCount属性に代入する
     this.currentDependentsCount = this.currentEmployee.dependentsCount;
   }
 
