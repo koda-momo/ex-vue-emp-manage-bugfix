@@ -12,6 +12,12 @@
       <div class="error" v-show="verificationPassErrorMessage">
         ＊パスワードが一致しません
       </div>
+      <div class="error" v-show="postalCodeErrorMessage">
+        ＊郵便番号を入力して下さい
+      </div>
+      <div class="error" v-show="addressErrorMessage">
+        ＊住所を入力して下さい
+      </div>
 
       <form class="col s12" id="reg-form">
         <!-- 名前-->
@@ -83,23 +89,31 @@ VerificationPassword"
           </div>
         </div>
         <!-- 郵便番号 -->
-        <div class="row">
-          <div class="input-field col s12">
-            <input
-              id="postalCode"
-              type="text"
-              class="postalCode"
-              v-model="postalCode"
-              required
-              minlength="7"
-              maxlength="7"
-            />
-            <label
-              for="
+        <div class="postCode">
+          <span class="row">
+            <span class="input-field col s12">
+              <input
+                id="postalCode"
+                type="text"
+                class="postalCode"
+                v-model="postalCode"
+                required
+                minlength="7"
+                maxlength="7"
+              />
+              <label
+                for="
 postalCode"
-              >郵便番号(ハイフンなし)</label
+                >郵便番号(ハイフンなし)</label
+              >
+            </span>
+            <button
+              type="button"
+              class="postbtn btn-large btn-register waves-effect waves-light"
             >
-          </div>
+              住所検索
+            </button>
+          </span>
         </div>
         <!-- 住所 -->
         <div class="row">
@@ -170,6 +184,10 @@ export default class RegisterAdmin extends Vue {
   private passErrorMessage = false;
   //確認用パスワードエラー
   private verificationPassErrorMessage = false;
+  //住所エラー
+  private addressErrorMessage = false;
+  //郵便番号エラー
+  private postalCodeErrorMessage = false;
 
   /**
    * 管理者情報を登録する.
@@ -184,24 +202,41 @@ export default class RegisterAdmin extends Vue {
     this.nameErrorMessage = false;
     this.mailErrorMessage = false;
     this.passErrorMessage = false;
+    this.addressErrorMessage = false;
+    this.postalCodeErrorMessage = false;
+    //名前空欄チェック
     if (this.lastName === "" || this.firstName === "") {
       this.nameErrorMessage = true;
     }
+    //メールアドレス空欄チェック
     if (this.mailAddress === "") {
       this.mailErrorMessage = true;
     }
+    //パスワード空欄チェック
     if (this.password === "") {
       this.passErrorMessage = true;
     }
+    //確認用パスワード一致チェック
     if (this.verificationPassword != this.password) {
       this.verificationPassErrorMessage = true;
+    }
+    //郵便番号空欄チェック
+    if (this.address === "") {
+      this.postalCodeErrorMessage = true;
+    }
+
+    //住所空欄チェック
+    if (this.postalCode === "") {
+      this.addressErrorMessage = true;
     }
 
     if (
       this.nameErrorMessage ||
       this.mailErrorMessage ||
       this.passErrorMessage ||
-      this.verificationPassErrorMessage
+      this.verificationPassErrorMessage ||
+      this.postalCodeErrorMessage ||
+      this.addressErrorMessage
     ) {
       return;
     }
@@ -219,6 +254,12 @@ export default class RegisterAdmin extends Vue {
       this.errorMessage = "登録に失敗しました(" + response.data.message + ")";
     }
   }
+
+  /**
+   * 郵便番号から住所を取得.
+   */
+
+  //終わり
 }
 </script>
 
@@ -228,5 +269,12 @@ export default class RegisterAdmin extends Vue {
 }
 .error {
   color: red;
+}
+.postbtn {
+  width: 100px;
+  font-size: 10px;
+}
+.postCode {
+  display: flex;
 }
 </style>
