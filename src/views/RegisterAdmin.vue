@@ -14,6 +14,7 @@
       </div>
 
       <form class="col s12" id="reg-form">
+        <!-- 名前-->
         <div class="row">
           <div class="input-field col s6">
             <input
@@ -36,6 +37,7 @@
             <label for="first_name">名</label>
           </div>
         </div>
+        <!-- メールアドレス-->
         <div class="row">
           <div class="input-field col s12">
             <input
@@ -48,6 +50,7 @@
             <label for="email">メールアドレス</label>
           </div>
         </div>
+        <!-- パスワード -->
         <div class="row">
           <div class="input-field col s12">
             <input
@@ -61,6 +64,7 @@
             <label for="password">パスワード</label>
           </div>
         </div>
+        <!-- 確認用パスワード -->
         <div class="row">
           <div class="input-field col s12">
             <input
@@ -78,6 +82,43 @@ VerificationPassword"
             >
           </div>
         </div>
+        <!-- 郵便番号 -->
+        <div class="row">
+          <div class="input-field col s12">
+            <input
+              id="postalCode"
+              type="text"
+              class="postalCode"
+              v-model="postalCode"
+              required
+              minlength="7"
+              maxlength="7"
+            />
+            <label
+              for="
+postalCode"
+              >郵便番号(ハイフンなし)</label
+            >
+          </div>
+        </div>
+        <!-- 住所 -->
+        <div class="row">
+          <div class="input-field col s12">
+            <input
+              id="address"
+              type="text"
+              class="address"
+              v-model="address"
+              required
+            />
+            <label
+              for="
+address"
+              >住所</label
+            >
+          </div>
+        </div>
+        <!-- ボタン -->
         <div class="row">
           <div class="input-field col s6">
             <button
@@ -115,6 +156,10 @@ export default class RegisterAdmin extends Vue {
   private password = "";
   //確認用パスワード
   private verificationPassword = "";
+  // 郵便番号
+  private postalCode = "";
+  // 住所
+  private address = "";
   //エラーメッセージ
   private errorMessage = "";
   //名前エラー
