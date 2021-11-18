@@ -12,8 +12,15 @@
       <div class="error" v-show="verificationPassErrorMessage">
         ＊パスワードが一致しません
       </div>
+      <div class="error" v-show="postalCodeErrorMessage">
+        ＊郵便番号を入力して下さい
+      </div>
+      <div class="error" v-show="addressErrorMessage">
+        ＊住所を入力して下さい
+      </div>
 
       <form class="col s12" id="reg-form">
+        <!-- 名前-->
         <div class="row">
           <div class="input-field col s6">
             <input
@@ -36,6 +43,7 @@
             <label for="first_name">名</label>
           </div>
         </div>
+        <!-- メールアドレス-->
         <div class="row">
           <div class="input-field col s12">
             <input
@@ -48,6 +56,7 @@
             <label for="email">メールアドレス</label>
           </div>
         </div>
+        <!-- パスワード -->
         <div class="row">
           <div class="input-field col s12">
             <input
@@ -61,6 +70,7 @@
             <label for="password">パスワード</label>
           </div>
         </div>
+        <!-- 確認用パスワード -->
         <div class="row">
           <div class="input-field col s12">
             <input
@@ -78,6 +88,55 @@ VerificationPassword"
             >
           </div>
         </div>
+        <!-- 郵便番号 -->
+        <div v-show="addressApiErrorMessage" class="error">
+          住所が見つかりません
+        </div>
+        <div class="postCode">
+          <span class="row">
+            <span class="input-field col s12">
+              <input
+                id="postalCode"
+                type="text"
+                class="postalCode"
+                v-model="postalCode"
+                required
+                minlength="7"
+                maxlength="7"
+              />
+              <label
+                for="
+postalCode"
+                >郵便番号(ハイフンなし)</label
+              >
+            </span>
+          </span>
+          <button
+            type="button"
+            class="postbtn btn-large btn-register waves-effect waves-light"
+            v-on:click="searchAddress"
+          >
+            住所検索
+          </button>
+        </div>
+        <!-- 住所 -->
+        <div class="row">
+          <div class="input-field col s12">
+            <input
+              id="address"
+              type="text"
+              class="address"
+              v-model="address"
+              required
+            />
+            <label
+              for="
+address"
+              >住所</label
+            >
+          </div>
+        </div>
+        <!-- ボタン -->
         <div class="row">
           <div class="input-field col s6">
             <button
@@ -115,6 +174,10 @@ export default class RegisterAdmin extends Vue {
   private password = "";
   //確認用パスワード
   private verificationPassword = "";
+  // 郵便番号
+  private postalCode = "";
+  // 住所
+  private address = "";
   //エラーメッセージ
   private errorMessage = "";
   //名前エラー
@@ -125,6 +188,12 @@ export default class RegisterAdmin extends Vue {
   private passErrorMessage = false;
   //確認用パスワードエラー
   private verificationPassErrorMessage = false;
+  //住所エラー
+  private addressErrorMessage = false;
+  //郵便番号エラー
+  private postalCodeErrorMessage = false;
+  //住所取得APIエラー
+  private addressApiErrorMessage = false;
 
   /**
    * 管理者情報を登録する.
@@ -139,24 +208,42 @@ export default class RegisterAdmin extends Vue {
     this.nameErrorMessage = false;
     this.mailErrorMessage = false;
     this.passErrorMessage = false;
+    this.addressErrorMessage = false;
+    this.postalCodeErrorMessage = false;
+
+    //名前空欄チェック
     if (this.lastName === "" || this.firstName === "") {
       this.nameErrorMessage = true;
     }
+    //メールアドレス空欄チェック
     if (this.mailAddress === "") {
       this.mailErrorMessage = true;
     }
+    //パスワード空欄チェック
     if (this.password === "") {
       this.passErrorMessage = true;
     }
+    //確認用パスワード一致チェック
     if (this.verificationPassword != this.password) {
       this.verificationPassErrorMessage = true;
+    }
+    //郵便番号空欄チェック
+    if (this.address === "") {
+      this.postalCodeErrorMessage = true;
+    }
+
+    //住所空欄チェック
+    if (this.postalCode === "") {
+      this.addressErrorMessage = true;
     }
 
     if (
       this.nameErrorMessage ||
       this.mailErrorMessage ||
       this.passErrorMessage ||
-      this.verificationPassErrorMessage
+      this.verificationPassErrorMessage ||
+      this.postalCodeErrorMessage ||
+      this.addressErrorMessage
     ) {
       return;
     }
@@ -165,6 +252,7 @@ export default class RegisterAdmin extends Vue {
       name: this.lastName + " " + this.firstName,
       mailAddress: this.mailAddress,
       password: this.password,
+      address: this.address,
     });
     console.dir("response:" + JSON.stringify(response));
 
@@ -174,6 +262,42 @@ export default class RegisterAdmin extends Vue {
       this.errorMessage = "登録に失敗しました(" + response.data.message + ")";
     }
   }
+
+  /**
+   * 郵便番号から住所を取得.
+   */
+  async searchAddress(): Promise<void> {
+    //初期値リセット
+    this.addressApiErrorMessage = false;
+    this.address = "";
+
+    //郵便番号を数字に
+    const apiPostalCode = Number(this.postalCode);
+
+    //APIを使って住所を取得
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const axiosJsonpAdapter = require("axios-jsonp");
+    try {
+      const responce = await axios.get("https://zipcoda.net/api", {
+        adapter: axiosJsonpAdapter,
+        params: {
+          zipcode: apiPostalCode,
+        },
+      });
+      // console.log("レスポンス：" + responce.data.status);
+      console.dir(JSON.stringify(responce));
+      if (responce.data.length != 1) {
+        this.addressApiErrorMessage = true;
+      } else {
+        this.address = responce.data.items[0].address;
+      }
+    } catch (e) {
+      console.log("errorerror");
+      this.addressApiErrorMessage = true;
+    }
+  }
+
+  //終わり
 }
 </script>
 
@@ -183,5 +307,12 @@ export default class RegisterAdmin extends Vue {
 }
 .error {
   color: red;
+}
+.postbtn {
+  width: 100px;
+  font-size: 10px;
+}
+.postCode {
+  display: flex;
 }
 </style>
