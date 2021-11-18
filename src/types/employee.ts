@@ -4,6 +4,7 @@
  * @remarks
  * 従業員情報を表します。
  */
+import { format } from "date-fns";
 export class Employee {
   constructor(
     // ID
@@ -72,6 +73,11 @@ export class Employee {
     this._hireDate = hireDate;
   }
 
+  get formatHireDate(): string {
+    const day = new Date(this.hireDate);
+    return format(day, "yyyy年MM月dd日");
+  }
+
   public get mailAddress(): string {
     return this._mailAddress;
   }
@@ -112,7 +118,7 @@ export class Employee {
     this._salary = salary;
   }
 
-  get fixSalary(): string {
+  get formatSalary(): string {
     return this.salary.toLocaleString() + "円";
   }
 

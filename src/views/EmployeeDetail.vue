@@ -34,7 +34,7 @@
             </tr>
             <tr>
               <th nowrap>入社日</th>
-              <td>{{ currentEmployee.fixHireDate }}</td>
+              <td><span v-html="currentEmployee.formatHireDate"></span></td>
             </tr>
             <tr>
               <th nowrap>メールアドレス</th>
@@ -58,7 +58,7 @@
             </tr>
             <tr>
               <th nowrap>給料</th>
-              <td>{{ currentEmployee.fixSalary }}</td>
+              <td>{{ currentEmployee.formatSalary }}</td>
             </tr>
             <tr>
               <th nowrap>特性</th>
