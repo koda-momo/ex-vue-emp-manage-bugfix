@@ -89,6 +89,9 @@ VerificationPassword"
           </div>
         </div>
         <!-- 郵便番号 -->
+        <div v-show="addressApiErrorMessage" class="error">
+          住所が見つかりません
+        </div>
         <div class="postCode">
           <span class="row">
             <span class="input-field col s12">
@@ -107,13 +110,14 @@ postalCode"
                 >郵便番号(ハイフンなし)</label
               >
             </span>
-            <button
-              type="button"
-              class="postbtn btn-large btn-register waves-effect waves-light"
-            >
-              住所検索
-            </button>
           </span>
+          <button
+            type="button"
+            class="postbtn btn-large btn-register waves-effect waves-light"
+            v-on:click="searchAddress"
+          >
+            住所検索
+          </button>
         </div>
         <!-- 住所 -->
         <div class="row">
@@ -188,6 +192,8 @@ export default class RegisterAdmin extends Vue {
   private addressErrorMessage = false;
   //郵便番号エラー
   private postalCodeErrorMessage = false;
+  //住所取得APIエラー
+  private addressApiErrorMessage = false;
 
   /**
    * 管理者情報を登録する.
@@ -204,6 +210,7 @@ export default class RegisterAdmin extends Vue {
     this.passErrorMessage = false;
     this.addressErrorMessage = false;
     this.postalCodeErrorMessage = false;
+
     //名前空欄チェック
     if (this.lastName === "" || this.firstName === "") {
       this.nameErrorMessage = true;
@@ -245,6 +252,7 @@ export default class RegisterAdmin extends Vue {
       name: this.lastName + " " + this.firstName,
       mailAddress: this.mailAddress,
       password: this.password,
+      address: this.address,
     });
     console.dir("response:" + JSON.stringify(response));
 
@@ -258,6 +266,26 @@ export default class RegisterAdmin extends Vue {
   /**
    * 郵便番号から住所を取得.
    */
+  async searchAddress(): Promise<void> {
+    this.addressApiErrorMessage = false;
+    this.address = "";
+    const apiPostalCode = Number(this.postalCode);
+
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const axiosJsonpAdapter = require("axios-jsonp");
+    const responce = await axios.get("https://zipcoda.net/api", {
+      adapter: axiosJsonpAdapter,
+      params: {
+        zipcode: apiPostalCode,
+      },
+    });
+    console.log("レスポンス：" + responce.data.status);
+    if (responce.data.length != 1) {
+      this.addressApiErrorMessage = true;
+    } else {
+      this.address = responce.data.items[0].address;
+    }
+  }
 
   //終わり
 }
